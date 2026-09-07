@@ -17,7 +17,7 @@ function Header() {
               <span className='text-lg font-jakarta'>AllShoes</span>
             </div>
 
-            <div className=' flex gap-10 text-sm sm:text-[0.9rem]'>
+            <div className=' flex gap-10 text-sm sm:text-[0.8rem]'>
                 <Link to="/" className=' hover:text-[#cbcbcb] duration-75'>HOME</Link>
                 <Link to="/all" className=' hover:text-[#cbcbcb] duration-75'>Shop All</Link>
                 <Link to="/men" className=' hover:text-[#cbcbcb] duration-75'>Men</Link>

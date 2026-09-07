@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Carousel from './Homepages/Carousel'
 import BestSellers from './Homepages/BestSellers'
 import FadeIn from './FadeIn'
+import Display from './Homepages/Display'
 
 function Homepage() {
   return (
@@ -26,6 +27,10 @@ function Homepage() {
 
       <FadeIn>
         <BestSellers/>
+      </FadeIn>
+      
+       <FadeIn>
+        <Display/>
       </FadeIn>
     </div>
   )

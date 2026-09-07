@@ -3,12 +3,17 @@ import { Link } from 'react-router-dom'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
 function getVisibleCount() {
-  if (typeof window === 'undefined') return 5
+  if (typeof window === 'undefined') return 4
   const w = window.innerWidth
   if (w < 640) return 1
-  if (w < 768) return 2
-  if (w < 1024) return 3
+  if (w < 768 || 1024) return 2
+  // if (w < 1024) return 2
   return 4
 }
 
@@ -21,6 +26,15 @@ function BestSellers() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [withTransition, setWithTransition] = useState(true)
   const isJumping = useRef(false)
+  const prevVisibleCount = useRef(visibleCount)
+  const hasPositioned = useRef(false) 
+
+  // MOBILE DRAG FUNCTIONALITY
+  const [dragPx, setDragPx] = useState(0)
+  const dragPxRef = useRef(0)
+  const dragState = useRef({ active: false, startX: 0, moved: false })
+  const viewportRef = useRef(null)
+  const isMobile = visibleCount === 1
 
   useEffect(() => {
     let resizeTimeout
@@ -36,6 +50,8 @@ function BestSellers() {
   }, [])
 
   useEffect(() => {
+    let ignore = false
+
     const fetchShoes = async () => {
       try {
         const [mensRes, womensRes] = await Promise.all([
@@ -54,15 +70,16 @@ function BestSellers() {
           if (mixed.length < 7 && womensData.products[i]) mixed.push(womensData.products[i])
         }
 
-        setData(mixed)
+        if (!ignore) setData(mixed)
       } catch (err) {
-        setError(err.message)
+        if (!ignore) setError(err.message)
       } finally {
-        setLoading(false)
+        if (!ignore) setLoading(false)
       }
     }
 
     fetchShoes()
+    return () => { ignore = true }
   }, [])
 
   useEffect(() => {
@@ -76,10 +93,17 @@ function BestSellers() {
 
   useEffect(() => {
     if (!loading && data.length > 0) {
-      setCurrentIndex(visibleCount)
+      const safeCount = Math.min(visibleCount, data.length)
+      if (!hasPositioned.current || prevVisibleCount.current !== visibleCount) {
+        setWithTransition(false)
+        hasPositioned.current = true
+      }
+      setCurrentIndex(safeCount)
+      prevVisibleCount.current = visibleCount
     }
   }, [visibleCount, loading, data.length])
 
+    //  LOADER
   if (loading) return (
     <section className='min-h-[70vh] w-full pt-5 flex flex-col px-6'>
       <div className='flex justify-between items-center'>
@@ -94,7 +118,7 @@ function BestSellers() {
               <div className='bg-white rounded-xl overflow-hidden flex flex-col h-full animate-pulse'>
 
                 <div className='flex items-center justify-center p-5'>
-                  <div className='h-32 w-full bg-gray-200 rounded-lg'></div>
+                  <div className='h-40 w-full bg-gray-200 rounded-lg'></div>
                 </div>
 
                 <div className='px-5 pb-5 flex-1 flex flex-col gap-3'>
@@ -110,9 +134,10 @@ function BestSellers() {
       </div>
     </section>
   )
+
   // ERROR CARD
   if (error) return (
-    <section className='min-h-[30vh] w-full pt-5 px-4 sm:px-6 flex flex-col'>
+    <section className='min-h-[30vh] w-full pt-5 px-7 sm:px-6 flex flex-col'>
       <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
 
       <div className='flex-1 flex items-center justify-center py-10'>
@@ -136,13 +161,18 @@ function BestSellers() {
       </div>
     </section>
   )
+
   if (data.length === 0) return null
 
-  const clonesBefore = data.slice(-visibleCount)
-  const clonesAfter = data.slice(0, visibleCount)
+  const safeVisibleCount = Math.min(visibleCount, data.length)
+  const clonesBefore = data.slice(-safeVisibleCount)
+  const clonesAfter = data.slice(0, safeVisibleCount)
   const extendedData = [...clonesBefore, ...data, ...clonesAfter]
 
   const slideOffset = (currentIndex * 100) / extendedData.length
+
+  const realSlideNumber =
+    (((currentIndex - safeVisibleCount) % data.length) + data.length) % data.length + 1
 
   const handleNext = () => {
     if (isJumping.current) return
@@ -159,105 +189,166 @@ function BestSellers() {
   const handleTransitionEnd = (e) => {
     if (e.target !== e.currentTarget || e.propertyName !== 'transform') return
 
-    if (currentIndex >= data.length + visibleCount) {
+    if (currentIndex >= data.length + safeVisibleCount || currentIndex < safeVisibleCount) {
+      const relative = currentIndex - safeVisibleCount
+      const normalized = ((relative % data.length) + data.length) % data.length
       isJumping.current = true
       setWithTransition(false)
-      setCurrentIndex(currentIndex - data.length)
-    } else if (currentIndex < visibleCount) {
-      isJumping.current = true
-      setWithTransition(false)
-      setCurrentIndex(currentIndex + data.length)
+      setCurrentIndex(normalized + safeVisibleCount)
+    }
+  }
+
+  const handleDragStart = (e) => {
+    if (!isMobile || isJumping.current) return
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    dragState.current = { active: true, startX: e.clientX, moved: false }
+    dragPxRef.current = 0
+    setDragPx(0)
+    setWithTransition(false)
+    try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
+  }
+
+  const handleDragMove = (e) => {
+    const st = dragState.current
+    if (!st.active) return
+    const dx = e.clientX - st.startX
+    if (Math.abs(dx) > 5) st.moved = true
+    dragPxRef.current = dx
+    setDragPx(dx)
+  }
+
+  const handleDragEnd = () => {
+    const st = dragState.current
+    if (!st.active) return
+    st.active = false
+    const dx = dragPxRef.current
+    dragPxRef.current = 0
+    setDragPx(0)
+    setWithTransition(true)
+
+    const width = viewportRef.current?.clientWidth ?? window.innerWidth
+    const threshold = width * 0.2
+    if (st.moved && dx <= -threshold) {
+      setCurrentIndex((prev) => prev + 1)
+    } else if (st.moved && dx >= threshold) {
+      setCurrentIndex((prev) => prev - 1)
+    }
+  }
+
+  const handleDragCancel = () => {
+    if (!dragState.current.active) return
+    dragState.current.active = false
+    dragPxRef.current = 0
+    setDragPx(0)
+    setWithTransition(true)
+  }
+
+  const handleCaptureClick = (e) => {
+    if (dragState.current.moved) {
+      e.preventDefault()
+      e.stopPropagation()
+      dragState.current.moved = false
     }
   }
 
   return (
-    <>
-      <section className=' min-h-[70vh] w-full pt-5 flex flex-col px-6'>
+    <section className=' min-h-[50vh] w-full justify-center  flex flex-col'>
 
-        <div className=' flex justify-between items-center'>
-          <h2 id='best-sellers' className=' uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
+      <div className='flex justify-between px-4 items-center'>
+        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
 
-          <span className=' flex gap-4 font-jakarta items-center justify-center text-black '>
-            <p
-              onClick={handlePrev}
-              className=' cursor-pointer  border-black border-[1px] p-2 sm:p-3 rounded-[50%] transition-all duration-300 ease-in-out font-bold  hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
-            >
-              <IoIosArrowBack/>
-            </p>
-            <p
-              onClick={handleNext}
-              className=' cursor-pointer  border-black border-[1px] p-2 sm:p-3 rounded-[50%] transition-all duration-300 ease-in-out font-bold  hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
-            >
-              <IoIosArrowForward/>
-            </p>
-          </span>
-        </div>
-
-        {/* CARDS */}
-
-        <div className='overflow-hidden pt-6 pb-6 mt-4 w-full'>
-          <div
-            onTransitionEnd={handleTransitionEnd}
-            className={`flex items-stretch ${withTransition ? 'transition-transform duration-500 ease-in-out' : ''}`}
-            style={{
-              transform: `translateX(-${slideOffset}%)`,
-              width: `${(extendedData.length * 100) / visibleCount}%`,
-            }}
+        <span className='flex gap-4 font-jakarta items-center justify-center text-black'>
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous product"
+            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
           >
-            {extendedData.map((shoe, i) => (
-              <div
-                key={`${shoe.id}-${i}`}
-                className='px-3'
-                style={{ width: `${100 / extendedData.length}%` }}
-              >
-                <Link to="/all" className='block h-full'>
-                  <div className='relative bg-white rounded-xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
+            <IoIosArrowBack/>
+          </button>
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next product"
+            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
+          >
+            <IoIosArrowForward/>
+          </button>
+        </span>
+      </div>
 
-                    <span className='absolute top-4 left-4 bg-[#E9E3D6] text-[10px] uppercase tracking-wider font-jakarta font-semibold px-3 py-1.5 rounded-full z-10'>
-                      New
-                    </span>
+      <p className='sr-only' aria-live="polite">
+        Showing product {realSlideNumber} of {data.length}
+      </p>
 
-                    <div className='flex items-center justify-center p-5'>
-                      <img
-                        src={shoe.thumbnail}
-                        alt={shoe.title}
-                        className='max-h-full max-w-full object-contain'
-                      />
-                    </div>
+      {/* CARDS */}
+      <div ref={viewportRef} className='overflow-hidden pt-6 pb-6 mt-4 w-full min-h-[30vh]'>
+        <div
+          onTransitionEnd={handleTransitionEnd}
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragCancel}
+          onClickCapture={handleCaptureClick}
+          className={`flex items-stretch select-none ${isMobile ? 'touch-pan-y cursor-grab active:cursor-grabbing' : ''} ${withTransition ? 'transition-transform duration-500 ease-in-out' : ''}`}
+          style={{
+            transform: `translateX(calc(-${slideOffset}% + ${dragPx}px))`,
+            width: `${(extendedData.length * 100) / visibleCount}%`,
+          }}
+        >
+          {extendedData.map((shoe, i) => (
+            <div
+              key={`${shoe.id}-${i}`}
+              className= ' px-6 sm:px-4'
+              style={{ width: `${100 / extendedData.length}%` }}
+            >
+              <Link to="/all" className='block h-full'>
+                <div className='relative bg-white rounded-3xl overflow-hidden flex gap-2 flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
 
-                    <div
-                      className='grid gap-2 px-5 pb-5 flex-1 content-start'
-                      style={{ gridTemplateAreas: `"title" "brand" "price"` }}
-                    >
-                      <h3
-                        style={{ gridArea: 'title' }}
-                        className='font-jakarta font-bold text-sm uppercase tracking-wide'
-                      >
-                        {shoe.title}
-                      </h3>
-                      <p
-                        style={{ gridArea: 'brand' }}
-                        className='font-jakarta text-sm text-gray-500'
-                      >
-                        {shoe.brand || shoe.tags?.[0] || 'Classic'}
-                      </p>
-                      <span
-                        style={{ gridArea: 'price' }}
-                        className='font-jakarta text-sm sm:text-base font-bold'
-                      >
-                        ${shoe.price}
-                      </span>
-                    </div>
+                  <span className='absolute top-4 left-4 bg-[#E9E3D6] text-[10px] uppercase tracking-wider font-jakarta font-semibold px-3 py-1.5 rounded-full z-10'>
+                    New
+                  </span>
 
+                  <div className='flex items-center justify-center p-5'>
+                    <img
+                      src={shoe.thumbnail}
+                      alt={shoe.title}
+                      className=' h-45 sm:h-50 md:h-60 max-w-full object-contain'
+                    />
                   </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
 
-      </section>
-    </>
+                  <div
+                    className='grid gap-2 px-5 pb-5 flex-1 content-start'
+                    style={{ gridTemplateAreas: `"title" "brand" "price"` }}
+                  >
+                    <h3
+                      style={{ gridArea: 'title' }}
+                      className='font-jakarta font-bold text-sm uppercase tracking-wide'
+                    >
+                      {shoe.title}
+                    </h3>
+                    <p
+                      style={{ gridArea: 'brand' }}
+                      className='font-jakarta text-sm text-gray-500'
+                    >
+                      {shoe.brand || shoe.tags?.[0] || 'Classic'}
+                    </p>
+                    <span
+                      style={{ gridArea: 'price' }}
+                      className='font-jakarta text-sm sm:text-base font-bold'
+                    >
+                      {currencyFormatter.format(shoe.price)}
+                    </span>
+                  </div>
+
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </section>
   )
 }
 

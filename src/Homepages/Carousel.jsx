@@ -7,6 +7,8 @@ function getRouteFromLabel(label) {
   const normalised = label.trim()
   if (normalised === 'Shop Men') return '/men'
   if (normalised === 'Shop Women') return '/women'
+  if (normalised === 'New Arrivals') return '/new-arrivals'
+  if (normalised === 'Best Sellers') return '/best-sellers'
   return '/all'
 }
 
@@ -14,10 +16,23 @@ function ExpandOnHover({ show, delay = 0, children }) {
   const contentRef = useRef(null)
   const [height, setHeight] = useState(0)
   const [clip, setClip] = useState(true)
+  const hasMounted = useRef(false)
 
   useLayoutEffect(() => {
     const node = contentRef.current
     if (!node) return
+
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      if (show) {
+        setClip(false)
+        setHeight(node.scrollHeight)
+      } else {
+        setClip(true)
+        setHeight(0)
+      }
+      return
+    }
 
     if (show) {
       setClip(true)
@@ -60,23 +75,27 @@ function ExpandOnHover({ show, delay = 0, children }) {
 
 function CarouselCard({ bgImage, mainLabel, secondaryLabel, tertiaryLabel }) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const isActive = isHovered || isFocused 
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className='relative flex justify-center  items-center flex-col bg-blend-darken transition-all ease-in-out duration-300 text-white bg-[#00000029] bg-bl rounded-3xl bg-cover bg-center overflow-hidden py-8 px-4'
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      className='relative flex justify-center items-center flex-col bg-blend-darken transition-all ease-in-out duration-300 text-white bg-[#00000029] rounded-3xl bg-cover bg-center overflow-hidden py-8 px-4 focus-within:outline-none'
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div>
         <MenButton MenButton={mainLabel} to={getRouteFromLabel(mainLabel)} />
       </div>
 
-      <ExpandOnHover show={isHovered}>
+      <ExpandOnHover show={isActive}>
         <WomenButton WomenButton={secondaryLabel} to={getRouteFromLabel(secondaryLabel)} />
       </ExpandOnHover>
 
-      <ExpandOnHover show={isHovered} delay={50}>
+      <ExpandOnHover show={isActive} delay={50}>
         <NewArrivals NewArrivals={tertiaryLabel} to={getRouteFromLabel(tertiaryLabel)} />
       </ExpandOnHover>
     </div>
@@ -86,28 +105,28 @@ function CarouselCard({ bgImage, mainLabel, secondaryLabel, tertiaryLabel }) {
 const CARDS = [
   {
     id: 'blue-card',
-    bgImage: 'Blue.jpg',
+    bgImage: '/Blue.jpg',
     mainLabel: 'New Arrivals',
     secondaryLabel: 'Shop Women',
     tertiaryLabel: 'Shop Men',
   },
   {
     id: 'brown-card',
-    bgImage: 'Brown.jpg',
+    bgImage: '/Brown.jpg',
     mainLabel: 'Shop Men',
     secondaryLabel: 'Shop Women',
     tertiaryLabel: 'New Arrivals',
   },
   {
     id: 'green-card',
-    bgImage: 'Green.jpg',
+    bgImage: '/Green.jpg',
     mainLabel: 'Best Sellers',
     secondaryLabel: 'Shop Men',
     tertiaryLabel: 'New Arrivals',
   },
   {
     id: 'pink-card',
-    bgImage: 'Pink.jpg',
+    bgImage: '/Pink.jpg',
     mainLabel: 'Shop Women',
     secondaryLabel: 'Best Sellers',
     tertiaryLabel: 'New Arrivals',
@@ -116,7 +135,7 @@ const CARDS = [
 
 function Carousel() {
   return (
-     <section className={`w-[100%] mb-6  h-[90vh] md:h-[100vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2 `}>
+    <section className='w-[100%] mb-10 h-[90vh] md:h-[100vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2'>
       {CARDS.map((card) => (
         <CarouselCard
           key={card.id}
