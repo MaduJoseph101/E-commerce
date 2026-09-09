@@ -12,8 +12,8 @@ function getVisibleCount() {
   if (typeof window === 'undefined') return 4
   const w = window.innerWidth
   if (w < 640) return 1
-  if (w < 768 || 1024) return 2
-  // if (w < 1024) return 2
+  if (w < 768 ) return 2
+  if (w < 1024) return  3
   return 4
 }
 
@@ -65,9 +65,9 @@ function BestSellers() {
 
         const mixed = []
         const max = Math.max(mensData.products.length, womensData.products.length)
-        for (let i = 0; i < max && mixed.length < 7; i++) {
+        for (let i = 0; i < max; i++) {
           if (mensData.products[i]) mixed.push(mensData.products[i])
-          if (mixed.length < 7 && womensData.products[i]) mixed.push(womensData.products[i])
+          if (womensData.products[i]) mixed.push(womensData.products[i])
         }
 
         if (!ignore) setData(mixed)
@@ -153,8 +153,7 @@ function BestSellers() {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className='mt-6 font-jakarta text-sm font-bold bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 active:scale-[0.98] transition-all duration-200 hover:cursor-pointer'
-          >
+            className='mt-6 font-jakarta text-sm font-bold bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 active:scale-[0.98] transition-all duration-200 hover:cursor-pointer'>
             Try again
           </button>
         </div>
@@ -263,7 +262,9 @@ function BestSellers() {
             onClick={handlePrev}
             aria-label="Previous product"
             className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
+
           >
+
             <IoIosArrowBack/>
           </button>
           <button
@@ -299,11 +300,11 @@ function BestSellers() {
           {extendedData.map((shoe, i) => (
             <div
               key={`${shoe.id}-${i}`}
-              className= ' px-6 sm:px-4'
+              className= ' px-6 sm:px-3'
               style={{ width: `${100 / extendedData.length}%` }}
             >
               <Link to="/all" className='block h-full'>
-                <div className='relative bg-white rounded-3xl overflow-hidden flex gap-2 flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
+                <div className='relative bg-white rounded-3xl overflow-hidden  flex gap-2  sm:gap-5 flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
 
                   <span className='absolute top-4 left-4 bg-[#E9E3D6] text-[10px] uppercase tracking-wider font-jakarta font-semibold px-3 py-1.5 rounded-full z-10'>
                     New
@@ -313,14 +314,13 @@ function BestSellers() {
                     <img
                       src={shoe.thumbnail}
                       alt={shoe.title}
-                      className=' h-45 sm:h-50 md:h-60 max-w-full object-contain'
+                      className=' h-45 sm:h-50 max-w-full object-contain'
                     />
                   </div>
 
                   <div
                     className='grid gap-2 px-5 pb-5 flex-1 content-start'
-                    style={{ gridTemplateAreas: `"title" "brand" "price"` }}
-                  >
+                    style={{ gridTemplateAreas: `"title" "brand" "price"` }}>
                     <h3
                       style={{ gridArea: 'title' }}
                       className='font-jakarta font-bold text-sm uppercase tracking-wide'
