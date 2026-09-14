@@ -135,7 +135,7 @@ const CARDS = [
 
 function Carousel() {
   return (
-    <section className='w-[100%] mb-10 h-[90vh] md:h-[100vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2'>
+    <section className='w-[100%] mb-10 h-[90vh] md:h-[110vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2'>
       {CARDS.map((card) => (
         <CarouselCard
           key={card.id}

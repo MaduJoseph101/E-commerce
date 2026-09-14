@@ -254,7 +254,7 @@ function BestSellers() {
     <section className=' min-h-[50vh] w-full justify-center  flex flex-col'>
 
       <div className='flex justify-between px-4 items-center'>
-        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
+        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Trending Now</h2>
 
         <span className='flex gap-4 font-jakarta items-center justify-center text-black'>
           <button
@@ -314,7 +314,7 @@ function BestSellers() {
                     <img
                       src={shoe.thumbnail}
                       alt={shoe.title}
-                      className=' h-45 sm:h-50 max-w-full object-contain'
+                      className=' h-45 sm:h-40 lg:h-50 max-w-full object-contain'
                     />
                   </div>
 

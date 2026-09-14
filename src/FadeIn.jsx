@@ -7,12 +7,12 @@ const directionVariants = {
   right: { opacity: 0, x: -40 },
 }
 
-function FadeIn({ children, delay = 0, direction = 'up', duration = 0.6, className = '' }) {
+function FadeIn({ children, delay = 0, direction = 'up', duration = 0.6, className = 'w-full', viewportAmount = 0.1 }) {
   return (
     <motion.div
       initial={directionVariants[direction]}
       whileInView={{ opacity: 1, y: 0, x: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, amount: viewportAmount }}
       transition={{ duration, delay, ease: 'easeOut' }}
       className={className}
     >
