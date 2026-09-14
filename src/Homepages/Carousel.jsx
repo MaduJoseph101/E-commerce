@@ -84,10 +84,14 @@ function CarouselCard({ bgImage, mainLabel, secondaryLabel, tertiaryLabel }) {
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
-      className='relative flex justify-center items-center flex-col bg-blend-darken transition-all ease-in-out duration-300 text-white bg-[#00000029] rounded-3xl bg-cover bg-center overflow-hidden py-8 px-4 focus-within:outline-none'
-      style={{ backgroundImage: `url(${bgImage})` }}
+      className='group relative flex justify-center items-center flex-col bg-blend-darken text-white bg-[#00000029] rounded-3xl overflow-hidden py-8 px-4 focus-within:outline-none'
     >
-      <div>
+      <div 
+        className='absolute inset-0 bg-cover bg-center brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-transform duration-700 ease-out z-0'
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+
+      <div className='relative z-10'>
         <MenButton MenButton={mainLabel} to={getRouteFromLabel(mainLabel)} />
       </div>
 

@@ -3,6 +3,7 @@ import Carousel from './Homepages/Carousel'
 import BestSellers from './Homepages/BestSellers'
 import FadeIn from './FadeIn'
 import Display from './Homepages/Display'
+import Prefooter from './Homepages/Prefooter'
 
 function Homepage() {
   return (
@@ -31,6 +32,10 @@ function Homepage() {
       
        <FadeIn>
         <Display/>
+      </FadeIn>
+
+       <FadeIn viewportAmount={0}>
+        <Prefooter/>
       </FadeIn>
     </div>
   )

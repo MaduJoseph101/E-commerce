@@ -115,16 +115,14 @@ function BestSellers() {
         <div className='flex items-stretch'>
           {Array.from({ length: visibleCount }).map((_, i) => (
             <div key={i} className='px-3' style={{ width: `${100 / visibleCount}%` }}>
-              <div className='bg-white rounded-xl overflow-hidden flex flex-col h-full animate-pulse'>
+              <div className='bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl overflow-hidden flex flex-col h-full animate-pulse'>
 
-                <div className='flex items-center justify-center p-5'>
-                  <div className='h-40 w-full bg-gray-200 rounded-lg'></div>
-                </div>
+                <div className='h-48 w-full bg-[#EFECE6]/80'></div>
 
-                <div className='px-5 pb-5 flex-1 flex flex-col gap-3'>
-                  <div className='h-3 bg-gray-200 rounded w-3/4'></div>
-                  <div className='h-3 bg-gray-200 rounded w-1/2'></div>
-                  <div className='h-3.5 bg-gray-200 rounded w-1/4 mt-2'></div>
+                <div className='p-5 flex-1 flex flex-col gap-3'>
+                  <div className='h-3 bg-gray-300 rounded w-1/3'></div>
+                  <div className='h-4 bg-gray-300 rounded w-3/4'></div>
+                  <div className='h-4 bg-gray-300 rounded w-1/2 mt-2'></div>
                 </div>
 
               </div>
@@ -300,45 +298,42 @@ function BestSellers() {
           {extendedData.map((shoe, i) => (
             <div
               key={`${shoe.id}-${i}`}
-              className= ' px-6 sm:px-3'
+              className='px-6 sm:px-3'
               style={{ width: `${100 / extendedData.length}%` }}
             >
-              <Link to="/all" className='block h-full'>
-                <div className='relative bg-white rounded-3xl overflow-hidden  flex gap-2  sm:gap-5 flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
+              <Link to="/all" className='block h-full group'>
+                <div className='relative bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-black/30'>
 
-                  <span className='absolute top-4 left-4 bg-[#E9E3D6] text-[10px] uppercase tracking-wider font-jakarta font-semibold px-3 py-1.5 rounded-full z-10'>
+                  <span className='absolute top-4 left-4 bg-black text-white text-[10px] uppercase tracking-widest font-jakarta font-bold px-3 py-1 rounded-full z-10 shadow-sm'>
                     New
                   </span>
 
-                  <div className='flex items-center justify-center p-5'>
+                  <div className='relative flex items-center justify-center p-6 bg-[#EFECE6]/70 overflow-hidden min-h-[200px]'>
                     <img
                       src={shoe.thumbnail}
                       alt={shoe.title}
-                      className=' h-45 sm:h-40 lg:h-50 max-w-full object-contain'
+                      className='h-44 sm:h-40 lg:h-48 max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out'
                     />
                   </div>
 
-                  <div
-                    className='grid gap-2 px-5 pb-5 flex-1 content-start'
-                    style={{ gridTemplateAreas: `"title" "brand" "price"` }}>
-                    <h3
-                      style={{ gridArea: 'title' }}
-                      className='font-jakarta font-bold text-sm uppercase tracking-wide'
-                    >
-                      {shoe.title}
-                    </h3>
-                    <p
-                      style={{ gridArea: 'brand' }}
-                      className='font-jakarta text-sm text-gray-500'
-                    >
-                      {shoe.brand || shoe.tags?.[0] || 'Classic'}
-                    </p>
-                    <span
-                      style={{ gridArea: 'price' }}
-                      className='font-jakarta text-sm sm:text-base font-bold'
-                    >
-                      {currencyFormatter.format(shoe.price)}
-                    </span>
+                  <div className='flex flex-col justify-between p-5 flex-1 gap-3 bg-[#F7F5F0]'>
+                    <div className='flex flex-col gap-1'>
+                      <span className='font-jakarta text-[11px] uppercase tracking-widest text-gray-500 font-semibold'>
+                        {shoe.brand || shoe.tags?.[0] || 'Classic'}
+                      </span>
+                      <h3 className='font-jakarta font-bold text-sm uppercase tracking-wide text-gray-950 line-clamp-1 group-hover:text-black transition-colors'>
+                        {shoe.title}
+                      </h3>
+                    </div>
+
+                    <div className='flex items-center justify-between pt-2 border-t border-[#E6E1D7]/70'>
+                      <span className='font-jakarta text-base font-extrabold text-gray-950'>
+                        {currencyFormatter.format(shoe.price)}
+                      </span>
+                      <span className='text-xs font-jakarta font-bold uppercase tracking-wider text-black group-hover:underline flex items-center gap-1'>
+                        Explore &rarr;
+                      </span>
+                    </div>
                   </div>
 
                 </div>
