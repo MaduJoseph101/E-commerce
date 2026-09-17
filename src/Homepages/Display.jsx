@@ -1,35 +1,35 @@
 import MenButton from '../Props/MenButton'
-import WomenButton from '../Props/WomenButton'
 
 const SECTIONS = [
   {
     id: 1,
-    bgImage: '/women-shoe.jpg',
+    bgImage: '/DisplayImages/women-shoe.jpg',
     alt: "Women's Footwear Collection",
     title: 'Style & Comfort',
     tag: "Women's Edition",
   },
   {
     id: 2,
-    bgImage: '/men-shoe.jpg',
+    bgImage: '/DisplayImages/men-shoe.jpg',
     alt: "Men's Footwear Collection",
     title: 'Casual & Everyday',
     tag: "Men's Edition",
   },
   {
     id: 3,
-    bgImage: '/athlete.jpg',
+    bgImage: '/DisplayImages/athlete.jpg',
     alt: 'Athletic Shoes Feature',
     title: 'Athletic & Performance',
     tag: 'Performance Series',
   },
+  
 ]
 
 function Display() {
   return (
     <section 
       aria-label="Featured Collections" 
-      className='min-h-[70dvh] sm:h-[130vh] lg:h-[90vh] py-6 px-3 mb-7 grid grid-cols-1 lg:grid-cols-3 gap-5 w-full font-jakarta'
+      className='min-h-[70dvh] sm:min-h-[130vh] lg:min-h-[95vh] py-6 px-3 mb-7 grid grid-cols-1 lg:grid-cols-3 gap-5 w-full font-jakarta'
     >
       {SECTIONS.map((box) => (
         <div 
@@ -39,9 +39,9 @@ function Display() {
           <img 
             src={box.bgImage} 
             alt={box.alt} 
-            loading='lazy'
+            // loading='eager'
             decoding='async'
-            className='absolute inset-0 h-full w-full object-center object-cover brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-transform duration-700 ease-out' 
+            className='absolute inset-0 h-full w-full object-center object-cover brightness-95 group-hover:brightness-100 group-hover:scale-110 transition-transform delay-100 duration-700 ease-out' 
           />         
 
           <div className='absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-black/0 z-0 pointer-events-none transition-opacity duration-300' />
@@ -61,9 +61,9 @@ function Display() {
                 MenButton='Shop Men' 
                 to='/men'
               />
-              <WomenButton 
+              <MenButton 
                 className='!bg-white !text-black !border-white hover:!bg-black hover:!text-white hover:!border-black shadow-md font-jakarta text-xs sm:text-sm font-bold py-2 px-4 rounded-full transition-all duration-300 w-full flex justify-center' 
-                WomenButton='Shop Women' 
+                MenButton='Shop Women' 
                 to='/women'
               />
             </div>

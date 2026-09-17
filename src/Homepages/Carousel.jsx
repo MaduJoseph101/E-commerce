@@ -7,9 +7,9 @@ function getRouteFromLabel(label) {
   const normalised = label.trim()
   if (normalised === 'Shop Men') return '/men'
   if (normalised === 'Shop Women') return '/women'
-  if (normalised === 'New Arrivals') return '/new-arrivals'
-  if (normalised === 'Best Sellers') return '/best-sellers'
-  return '/all'
+  if (normalised === 'New Arrivals') return '/all'
+  if (normalised === 'Best Sellers') return '/all'
+  return '/'
 }
 
 function ExpandOnHover({ show, delay = 0, children }) {
@@ -109,28 +109,28 @@ function CarouselCard({ bgImage, mainLabel, secondaryLabel, tertiaryLabel }) {
 const CARDS = [
   {
     id: 'blue-card',
-    bgImage: '/Blue.jpg',
+    bgImage: '/CarouselImages/Blue.jpg',
     mainLabel: 'New Arrivals',
     secondaryLabel: 'Shop Women',
     tertiaryLabel: 'Shop Men',
   },
   {
     id: 'brown-card',
-    bgImage: '/Brown.jpg',
+    bgImage: '/CarouselImages/Brown.jpg',
     mainLabel: 'Shop Men',
     secondaryLabel: 'Shop Women',
     tertiaryLabel: 'New Arrivals',
   },
   {
     id: 'green-card',
-    bgImage: '/Green.jpg',
+    bgImage: '/CarouselImages/Green.jpg',
     mainLabel: 'Best Sellers',
     secondaryLabel: 'Shop Men',
     tertiaryLabel: 'New Arrivals',
   },
   {
     id: 'pink-card',
-    bgImage: '/Pink.jpg',
+    bgImage: '/CarouselImages/Pink.jpg',
     mainLabel: 'Shop Women',
     secondaryLabel: 'Best Sellers',
     tertiaryLabel: 'New Arrivals',
@@ -139,7 +139,7 @@ const CARDS = [
 
 function Carousel() {
   return (
-    <section className='w-[100%] mb-10 h-[90vh] md:h-[110vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2'>
+    <section aria-label='shoe carousel' className='w-[100%] mb-10 h-[90vh] md:h-[110vh] lg:h-[60vh] bg-[#ECE9E2] grid-cols-1 grid md:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-3 px-5 sm:px-2'>
       {CARDS.map((card) => (
         <CarouselCard
           key={card.id}

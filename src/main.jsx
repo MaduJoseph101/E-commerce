@@ -3,11 +3,18 @@ import { createRoot } from 'react-dom/client'
 import './Commerce.css'
 import Header from './Header'
 import Homepage from './Homepage'
-import MenProducts from './MenProducts'
-import WomenProduct from './WomenProduct'
-import  AllProduct  from './AllProduct'
-
+import MenItems from './MenProducts/MenItems'
+import WomenItems from './WomenProducts/WomenItems'
+import Allitems from './AllPoducts/Allitems'
+import Signup from './Signup'
+import Cart from './Purchase/Cart'
+import ProductDetails from './Purchase/ProductDetails'
+import Footer from './Footer'
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
+import FAQ from './Props/FAQ'
+
+
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,10 +22,15 @@ createRoot(document.getElementById('root')).render(
     <Header/>
       <Routes>
         <Route path='/' element={<Homepage/>}/>
-        <Route path='/all' element={<AllProduct/>}/>
-        <Route path='/men' element={<MenProducts/>}/>
-        <Route path='/women' element={<WomenProduct/>}/>
+        <Route path='/all' element={<Allitems/>}/>
+        <Route path='/men' element={<MenItems/>}/>
+        <Route path='/women' element={<WomenItems/>}/>
+        <Route path='/signup' element={<Signup/>}/>
+        <Route path='/cart' element={<Cart/>}/>
+        <Route path='/faq' element={<FAQ/>}/>
+        <Route path='/productdetails/:id' element={<ProductDetails/>}/>
       </Routes>
+      <Footer/>
     </BrowserRouter>
   </StrictMode>,
 )

@@ -103,26 +103,43 @@ function BestSellers() {
     }
   }, [visibleCount, loading, data.length])
 
-    //  LOADER
+    // LOADER
   if (loading) return (
-    <section className='min-h-[70vh] w-full pt-5 flex flex-col px-6'>
-      <div className='flex justify-between items-center'>
-        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
+    <section className='min-h-[50vh] w-full pt-5 flex flex-col justify-center px-4 sm:px-6 font-jakarta'>
+      <div className='flex justify-between px-4 items-center'>
+        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 border-black w-fit font-bold text-gray-950'>
+          Trending Now
+        </h2>
+        <div className='flex gap-4 items-center'>
+          <div className='w-8 h-8 rounded-full bg-gray-300 animate-pulse' />
+          <div className='w-8 h-8 rounded-full bg-gray-300 animate-pulse' />
+        </div>
       </div>
 
       {/* SKELETON CARDS */}
-      <div className='overflow-hidden pt-6 pb-6 mt-6 w-full'>
+      <div className='overflow-hidden pt-6 pb-6 mt-4 w-full'>
         <div className='flex items-stretch'>
           {Array.from({ length: visibleCount }).map((_, i) => (
-            <div key={i} className='px-3' style={{ width: `${100 / visibleCount}%` }}>
-              <div className='bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl overflow-hidden flex flex-col h-full animate-pulse'>
+            <div key={i} className='px-6 sm:px-3' style={{ width: `${100 / visibleCount}%` }}>
+              <div className='bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl overflow-hidden flex flex-col h-full animate-pulse shadow-xs'>
+                
+                {/* IMAGE PLACEHOLDER FOR SKELETON CARDS */}
+                <div className='relative flex items-center justify-center p-6 bg-[#EFECE6]/70 min-h-[200px]'>
+                  <div className='absolute top-4 left-4 w-12 h-4 bg-gray-300/80 rounded-full' />
+                  <div className='w-32 h-28 bg-gray-300/60 rounded-2xl' />
+                </div>
 
-                <div className='h-48 w-full bg-[#EFECE6]/80'></div>
+                {/* DETAILS PLACEHOLDER FOR SKELETON CARDS */}
+                <div className='flex flex-col justify-between p-5 flex-1 gap-4 bg-[#F7F5F0]'>
+                  <div className='flex flex-col gap-2'>
+                    <div className='h-3 bg-gray-300/70 rounded w-1/3' />
+                    <div className='h-4 bg-gray-300/80 rounded w-3/4' />
+                  </div>
 
-                <div className='p-5 flex-1 flex flex-col gap-3'>
-                  <div className='h-3 bg-gray-300 rounded w-1/3'></div>
-                  <div className='h-4 bg-gray-300 rounded w-3/4'></div>
-                  <div className='h-4 bg-gray-300 rounded w-1/2 mt-2'></div>
+                  <div className='flex items-center justify-between pt-3 border-t border-[#E6E1D7]/70'>
+                    <div className='h-5 bg-gray-300/80 rounded w-16' />
+                    <div className='h-4 bg-gray-300/70 rounded w-16' />
+                  </div>
                 </div>
 
               </div>
@@ -135,24 +152,27 @@ function BestSellers() {
 
   // ERROR CARD
   if (error) return (
-    <section className='min-h-[30vh] w-full pt-5 px-7 sm:px-6 flex flex-col'>
-      <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Best Sellers</h2>
+    <section className='min-h-[35vh] w-full py-8 px-5 sm:px-6 flex flex-col justify-center font-jakarta'>
+      <div className='flex justify-between items-center mb-6 px-1'>
+        <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 border-black w-fit font-bold text-gray-950'>Trending Now</h2>
+      </div>
 
-      <div className='flex-1 flex items-center justify-center py-10'>
-        <div className='w-full max-w-md bg-white rounded-xl shadow-sm p-6 sm:p-10 text-center'>
-          <div className='w-12 h-12 text-red-600 sm:w-14 sm:h-14 mx-auto rounded-full bg-[#E9E3D6] flex items-center justify-center font-jakarta font-bold text-lg sm:text-xl'>
-            !
-          </div>
-          <p className='font-jakarta font-bold text-base sm:text-lg mt-4'>
-            Couldn't load best sellers
-          </p>
-          <p className='font-jakarta text-sm sm:text-base text-gray-500 mt-2'>
-            Something went wrong while fetching the products. Check your connection and try again.
+      <div className='flex items-center justify-center py-6'>
+        <div className='w-full max-w-lg bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl p-8 sm:p-10 text-center flex flex-col items-center gap-3 shadow-sm'>
+          <span className='font-jakarta text-[11px] uppercase tracking-widest text-gray-400 font-semibold'>
+            Connection Error
+          </span>
+          <h3 className='font-jakarta font-extrabold text-lg sm:text-xl text-gray-950 tracking-tight'>
+            Unable to load products
+          </h3>
+          <p className='font-jakarta text-xs sm:text-sm text-gray-600 max-w-sm leading-relaxed'>
+            We couldn't retrieve the latest items. Please check your network connection and try again.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className='mt-6 font-jakarta text-sm font-bold bg-black text-white px-6 py-2.5 rounded-full hover:bg-gray-800 active:scale-[0.98] transition-all duration-200 hover:cursor-pointer'>
-            Try again
+            className='mt-3 font-jakarta text-xs sm:text-sm font-bold bg-[#111111] text-white px-7 py-3 rounded-full hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer shadow-sm'
+          >
+            Try Again
           </button>
         </div>
       </div>
@@ -249,7 +269,7 @@ function BestSellers() {
   }
 
   return (
-    <section className=' min-h-[50vh] w-full justify-center  flex flex-col'>
+    <section aria-label='Trending products' className=' min-h-[50vh] w-full justify-center  flex flex-col'>
 
       <div className='flex justify-between px-4 items-center'>
         <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Trending Now</h2>
@@ -301,7 +321,7 @@ function BestSellers() {
               className='px-6 sm:px-3'
               style={{ width: `${100 / extendedData.length}%` }}
             >
-              <Link to="/all" className='block h-full group'>
+              <Link to={`/all`} className='block h-full group'>
                 <div className='relative bg-[#F7F5F0] border border-[#E6E1D7] rounded-3xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-black/30'>
 
                   <span className='absolute top-4 left-4 bg-black text-white text-[10px] uppercase tracking-widest font-jakarta font-bold px-3 py-1 rounded-full z-10 shadow-sm'>
@@ -330,9 +350,9 @@ function BestSellers() {
                       <span className='font-jakarta text-base font-extrabold text-gray-950'>
                         {currencyFormatter.format(shoe.price)}
                       </span>
-                      <span className='text-xs font-jakarta font-bold uppercase tracking-wider text-black group-hover:underline flex items-center gap-1'>
+                      {/* <span className='text-xs font-jakarta font-bold uppercase tracking-wider text-black group-hover:underline flex items-center gap-1'>
                         Explore &rarr;
-                      </span>
+                      </span> */}
                     </div>
                   </div>
 
