@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import FAQ from '../Props/FAQ'
-import Display from '../Homepages/Display'
+import FadeIn from '../FadeIn'
 
 function WomenItems() {
   const [products, setProducts] = useState([])
@@ -28,12 +28,13 @@ function WomenItems() {
   }, [])
 
   return (
-    <div className='min-h-screen w-full bg-[#ECE9E2] font-jakarta px-3 sm:px-6 py-6'>
+   <FadeIn>
+     <div className='min-h-screen w-full bg-[#ECE9E2] font-jakarta px-3 sm:px-6 py-6'>
       <div className='max-w-7xl mx-auto space-y-8'>
         
         {/* HERO CONTAINER*/}
         <div 
-          className='relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] rounded-3xl overflow-hidden bg-cover bg-center shadow-sm'
+          className='relative w-full h-[45dvh] sm:h-[45vh] md:h-[55vh] rounded-3xl overflow-hidden bg-cover bg-center shadow-sm'
           style={{ backgroundImage: "url('/DisplayImages/womenitems-shoe.jpg')" }}
         >
           <div className='absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex flex-col justify-between p-6 sm:p-10 text-white'>
@@ -49,7 +50,7 @@ function WomenItems() {
               <h1 className='text-3xl sm:text-[2.5rem] font-extrabold tracking-tight text-white'>
                 Women's Shoes
               </h1>
-              <p className='text-xs sm:text-sm md:text-base text-gray-200 leading-relaxed font-normal'>
+              <p className='text-xs sm:text-sm md:text-base text-white/90 leading-relaxed font-normal'>
                 Discover your perfect balance of style and comfort with our collection of women's shoes designed for every occasion.
               </p>
             </div>
@@ -112,7 +113,7 @@ function WomenItems() {
                    
 
                     {/* PRODUCT IMAGE */}
-                    <div className='w-full h-36 sm:h-56 flex items-center justify-center p-1 sm:p-2 overflow-hidden bg-white'>
+                    <div className='w-full h-34 sm:h-52 flex items-center justify-center p-1 sm:p-2 overflow-hidden bg-white'>
                       <img 
                         src={product.thumbnail || product.images?.[0]} 
                         alt={product.title}
@@ -150,14 +151,12 @@ function WomenItems() {
             title="WOMEN'S SHOES" 
             description="Discover your perfect balance of style and comfort with our collection of women's shoes designed for every occasion. From polished office days to catching up with friends after work, or exploring your favourite trail, our shoes offer sustainable support with every step, so you look and feel incredible all day long"
           />
-  
           
         </div>
-
-          
+        
       </div>
-
     </div>
+   </FadeIn>
   )
 }
 

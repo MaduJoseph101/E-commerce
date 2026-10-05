@@ -33,7 +33,7 @@ function FAQ({ title, description }) {
   const defaultTitle = "Frequently asked Questions"
   return (
     <section className='w-full max-w-4xl mb-5 sm:mb-10 mx-auto px-4 py-12 font-jakarta text-black'>
-      <h2 className='text-center  uppercase tracking-[0.25em] text-sm sm:text-base font-semibold text-gray-900 mb-6'>
+      <h2 className='text-center uppercase tracking-[0.25em] text-sm sm:text-base font-semibold text-gray-900 mb-4'>
         {title || defaultTitle}
       </h2>
 

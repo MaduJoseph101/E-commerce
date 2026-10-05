@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { FaStar, FaTruck, FaShieldAlt, FaArrowLeft } from 'react-icons/fa'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { FaStar, FaTruck, FaShieldAlt, FaArrowLeft, FaHeart } from 'react-icons/fa'
+import { FiHeart } from 'react-icons/fi'
+import { useCart } from '../CartContext'
 import ProductsDisplay from './ProductsDisplay'
 
 const MENS_SIZES = [8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 14, 15]
 const OUT_OF_STOCK_SIZES = [12, 15]
 
 function ProductDetails() {
+  const navigate = useNavigate()
   const { id } = useParams()
+  const { addToCart, cartItems, toggleWishlist, isInWishlist } = useCart()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -15,7 +19,6 @@ function ProductDetails() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState(null)
   const [selectedColor, setSelectedColor] = useState(0)
-  const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -44,10 +47,40 @@ function ProductDetails() {
     { name: 'Blizzard White', bg: 'bg-[#f5f5f5]', border: 'border-gray-300' },
   ]
 
+  const colorHexMap = ['#2b2b2b', '#525252', '#f5f5f5']
+
+  // Derive the cart key for the currently selected 
+  const cartKey = product && selectedSize
+    ? `${product.id}-${selectedSize}-${colors[selectedColor].name}`
+    : null
+
+  //CHECKS IF A PRODUCT VARIANT ALREADY EXISTS IN CART
+  const cartItem = cartItems.find((i) => i.key === cartKey)
+  const cartQty = cartItem ? cartItem.quantity : 0
+  const isMaxStockReached = product && cartQty >= (product.stock || 99)
+
+  const [addedToCart, setAddedToCart] = useState(false)
+  const [wasIncrement, setWasIncrement] = useState(false)
+  const [stockWarning, setStockWarning] = useState(false)
+
   const handleAddToCart = () => {
     if (!selectedSize) return
-    setAddedToCart(true)
-    setTimeout(() => setAddedToCart(false), 4000)
+    if (isMaxStockReached) {
+      setStockWarning(true)
+      setTimeout(() => setStockWarning(false), 3500)
+      return
+    }
+
+    const isIncrement = cartQty > 0
+    const success = addToCart(product, selectedSize, { ...colors[selectedColor], hex: colorHexMap[selectedColor] })
+    if (success) {
+      setWasIncrement(isIncrement)
+      setAddedToCart(true)
+      setTimeout(() => setAddedToCart(false), 4000)
+    } else {
+      setStockWarning(true)
+      setTimeout(() => setStockWarning(false), 3500)
+    }
   }
 
   if (loading) {
@@ -96,10 +129,9 @@ function ProductDetails() {
         
         {/* BACK BUTTON*/}
         <div>
-
-          <Link to='' className='inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-700 hover:text-black transition-colors'>
-            <FaArrowLeft className='text-xs' /> Back to Homepage
-          </Link>
+          <button onClick={() => navigate(-1)} className='inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-700 hover:text-black transition-colors cursor-pointer'>
+            <FaArrowLeft className='text-xs' /> Back
+          </button>
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
@@ -109,7 +141,7 @@ function ProductDetails() {
 
             {/* PRODUCT IMAGE */}
             <div className='relative bg-[#F4F1EA] rounded-3xl p-6 sm:p-10 flex items-center justify-center min-h-[380px] sm:min-h-[480px] border border-gray-200/80 shadow-xs overflow-hidden'>
-              <span className='absolute top-6 left-6 bg-white text-gray-900 text-[11px] font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs uppercase'>
+              <span className='absolute top-4 left-3 sm:top-6 sm:left-6 bg-white text-gray-900 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs uppercase'>
                 Trending
               </span>
               <img 
@@ -221,23 +253,73 @@ function ProductDetails() {
               </div>
             </div>
 
-            {/* ADD CART */}
-            <div className='pt-2'>
-              <button
-                onClick={handleAddToCart}
-                disabled={!selectedSize}
-                className={`w-full py-4 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all duration-200 shadow-sm ${
-                  !selectedSize
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#212121] text-white hover:bg-black hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
-                }`}
-              >
-                {selectedSize ? `ADD TO CART - $${product.price}` : 'SELECT A SIZE'}
-              </button>
+            {/* ADD CART & SAVE FOR LATER */}
+            <div className='pt-2 space-y-2'>
+              <div className='flex justify-center items-center  gap-3'>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!selectedSize}
+                  className={`flex-1 py-4 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all duration-200 shadow-sm ${
+                    !selectedSize
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : isMaxStockReached
+                      ? 'bg-amber-600 text-white hover:bg-amber-700 cursor-pointer'
+                      : cartQty > 0
+                      ? 'bg-[#212121] text-white hover:bg-black hover:scale-[1.01] active:scale-[0.99] cursor-pointer ring-2 ring-offset-2 ring-[#212121]'
+                      : 'bg-[#212121] text-white hover:bg-black hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
+                  }`}
+                >
+                  {!selectedSize
+                    ? 'SELECT A SIZE'
+                    : isMaxStockReached
+                    ? `MAX STOCK IN CART (×${cartQty})`
+                    : cartQty > 0
+                    ? `IN CART (×${cartQty}) — ADD ANOTHER`
+                    : `ADD TO CART — $${product.price}`}
+                </button>
+
+                {/* SAVE FOR LATER (WISHLIST) BUTTON */}
+                <button
+                  onClick={() => toggleWishlist(product)}
+                  className={` h-10 w-10 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer ${
+                    isInWishlist(product.id)
+                      ? 'border-red-500 bg-red-50 text-red-500 hover:bg-red-100'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-black hover:text-black'
+                  }`}
+                  title={isInWishlist(product.id) ? 'Remove from Save for Later' : 'Save for Later'}
+                  aria-label='Save for Later'
+                >
+                  {isInWishlist(product.id) ? (
+                    <FaHeart className='text-lg text-red-500' />
+                  ) : (
+                    <FiHeart className='text-[1rem]' />
+                  )}
+                </button>
+              </div>
+
+              {/* STOCK WARNING ALERT */}
+              {stockWarning && (
+                <div className='p-2.5 bg-amber-50 text-amber-900 border border-amber-200 text-xs text-center rounded-xl font-bold'>
+                  Maximum available stock ({product.stock} items) reached in your cart!
+                </div>
+              )}
+
+              {/* CART QTY INDICATOR — always visible when item is in cart for a variant */}
+              {cartQty > 0 && !addedToCart && !stockWarning && (
+                <div className='p-2.5 bg-[#F4F1EA] text-gray-700 text-xs tracking-wide text-center rounded-xl font-semibold flex items-center justify-center gap-3'>
+                  <span> {cartQty} of this variant already in your cart</span>
+                  <Link to='/cart' className='underline font-bold text-gray-900 hover:text-black'>
+                    View Cart →
+                  </Link>
+                </div>
+              )}
 
               {addedToCart && (
-                <div className='mt-2 p-2.5 bg-green-50 text-green-800 text-xs tracking-wide text-center rounded-xl font-bold'>
-                  ✓  {product.title} addded to your cart!
+                <div className='p-2.5 bg-green-50 text-green-800 text-xs tracking-wide text-center rounded-xl font-bold flex items-center justify-center gap-3'>
+                  <span>{wasIncrement ? `✓ Added another! Now ×${cartQty} in cart` : '✓ Added to cart!'}</span>
+                  <Link to='/cart' className='underline font-bold text-green-700 hover:text-green-900'>
+                    View Cart →
+                  </Link>
                 </div>
               )}
 

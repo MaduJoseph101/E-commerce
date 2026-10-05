@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import FAQ from '../Props/FAQ'
+import FadeIn from '../FadeIn'
 
 function MenItems() {
   const [products, setProducts] = useState([])
@@ -27,12 +28,13 @@ function MenItems() {
   }, [])
 
   return (
-    <div className='min-h-screen w-full bg-[#ECE9E2] font-jakarta px-3 sm:px-6 py-6'>
+    <FadeIn>
+       <div className='min-h-screen w-full bg-[#ECE9E2] font-jakarta px-3 sm:px-6 py-6'>
       <div className='max-w-7xl mx-auto space-y-8'>
         
         {/* TOP HERO CONTAINER */}
         <div 
-          className='relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] rounded-3xl overflow-hidden bg-cover bg-center shadow-sm'
+          className='relative w-full h-[45dvh] sm:h-[45vh] md:h-[55vh] rounded-3xl overflow-hidden bg-cover bg-center shadow-sm'
           style={{ backgroundImage: "url('/menitems-shoe.jpg')" }}
         >
           <div className='absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex flex-col justify-between p-6 sm:p-10 text-white'>
@@ -48,7 +50,7 @@ function MenItems() {
               <h1 className='text-3xl sm:text-[2.5rem] font-extrabold tracking-tight text-white'>
                 Men's Shoes
               </h1>
-              <p className='text-xs sm:text-sm md:text-base text-gray-200 leading-relaxed font-normal'>
+              <p className='text-xs sm:text-sm md:text-base text-white/90 leading-relaxed font-normal'>
                 Sustainable, supportive, and effortlessly stylish, our shoes keep pace with wherever you're headed.
               </p>
             </div>
@@ -111,7 +113,7 @@ function MenItems() {
                    
 
                     {/* PRODUCT IMAGE */}
-                    <div className='w-full h-36 sm:h-56 flex items-center justify-center p-1 overflow-hidden bg-white'>
+                    <div className='w-full h-34 sm:h-52 flex items-center justify-center p-1 overflow-hidden bg-white'>
                       <img 
                         src={product.thumbnail || product.images?.[0]} 
                         alt={product.title}
@@ -144,6 +146,7 @@ function MenItems() {
           )}
         </div>
 
+       
         <div className='pt-8 border-t border-gray-300/60'>
           <FAQ 
             title="MEN'S SHOES" 
@@ -154,6 +157,7 @@ function MenItems() {
 
       </div>
     </div>
+    </FadeIn>
   )
 }
 

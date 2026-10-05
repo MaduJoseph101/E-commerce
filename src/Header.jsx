@@ -6,9 +6,13 @@ import { CiMenuBurger } from "react-icons/ci";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { CiCircleRemove } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
+import { FiHeart } from "react-icons/fi";
+import { useCart } from './CartContext'
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { itemCount, openDrawer, wishlistItems } = useCart()
+  const savedCount = wishlistItems ? wishlistItems.length : 0
 
   return (
     <>
@@ -26,18 +30,43 @@ function Header() {
                 <Link to="/women" className=' hover:text-[#cbcbcb] duration-75'>Women</Link>
             </div>
 
-            <div className=' flex gap-3 lg:gap-5'>
-                <Link to="/all" className=' text-lg lg:text-[1.2rem] font-bold'><RiSearchLine/></Link>
-                <Link to="/cart" className=' text-lg lg:text-[1.2rem] font-bold'><AiOutlineShopping /></Link>
-                <Link to="/signup" className=' text-lg lg:text-[1.2rem] font-bold'><CgProfile /></Link>
+            <div className=' flex gap-3 lg:gap-5 items-center'>
+                <Link to="/all" className=' text-lg lg:text-[1.1rem] font-bold' aria-label='search button'><RiSearchLine/></Link>
+                
+               
+
+                {/* CART */}
+                <button
+                  onClick={openDrawer}
+                  className='relative text-lg lg:text-[1.1rem] font-bold cursor-pointer hover:text-gray-300 transition-colors'
+                  aria-label='shopping cart'
+                >
+                  <AiOutlineShopping />
+                  {itemCount > 0 && (
+                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none'>
+                      {itemCount > 9 ? '9+' : itemCount}
+                    </span>
+                  )}
+                </button>
+                
+                 {/* SAVED ITEMS / WISHLIST */}
+                <Link to="/saved" className='relative text-lg lg:text-[1.1rem] font-bold hover:text-gray-300 transition-colors' aria-label='saved items'>
+                  <FiHeart />
+                  {savedCount > 0 && (
+                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none'>
+                      {savedCount > 9 ? '9+' : savedCount}
+                    </span>
+                  )}
+                </Link>
+                <Link to="/signup" className=' text-lg lg:text-[1.1rem] font-bold' aria-label='profile'><CgProfile /></Link>
             </div>
         </header>
 
         {/* MOBILE HEADER*/}
-        <header className=' md:hidden sticky top-0  h-[8dvh] z-30 w-full bg-[#212121] text-white flex justify-between px-4 items-center font-jakarta uppercase'>
+        <header className=' md:hidden sticky top-0  h-[7dvh] z-30 w-full bg-[#212121] text-white flex justify-between px-4 items-center font-jakarta uppercase'>
 
            <div className=' flex justify-center items-center gap-4'>
-             <button onClick={() => setIsMenuOpen(true)} className=' text-xl'>
+             <button onClick={() => setIsMenuOpen(true)} className=' text-xl' aria-label='menu button'>
               <RxHamburgerMenu />
             </button>
 
@@ -47,9 +76,28 @@ function Header() {
 
             <span className='text-base font-bold font-jakarta'>AllShoes</span>
 
-            <div className=' flex gap-4'>
+            <div className=' flex gap-4 items-center'>
                 <Link to="/all" className=' text-lg font-bold'><RiSearchLine /></Link>
-                <Link to="/cart" className=' text-lg font-bold'><AiOutlineShopping /></Link>
+                <Link to="/saved" className='relative text-lg font-bold' aria-label='saved items'>
+                  <FiHeart />
+                  {savedCount > 0 && (
+                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none'>
+                      {savedCount > 9 ? '9+' : savedCount}
+                    </span>
+                  )}
+                </Link>
+                <button
+                  onClick={openDrawer}
+                  className='relative text-lg font-bold cursor-pointer'
+                  aria-label='shopping cart'
+                >
+                  <AiOutlineShopping />
+                  {itemCount > 0 && (
+                    <span className='absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none'>
+                      {itemCount > 9 ? '9+' : itemCount}
+                    </span>
+                  )}
+                </button>
             </div>
         </header>
 
@@ -107,6 +155,18 @@ function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               Women
+            </Link>
+            <Link 
+              to="/saved" 
+              className=' text-lg hover:text-gray-300 transition-colors flex items-center justify-between'
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span>Saved Items</span>
+              {savedCount > 0 && (
+                <span className='bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full'>
+                  {savedCount}
+                </span>
+              )}
             </Link>
           </nav>
         </div>
