@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { RiSearchLine } from "react-icons/ri";
 import { AiOutlineShopping } from "react-icons/ai";
 import { CiMenuBurger } from "react-icons/ci";
@@ -9,10 +9,22 @@ import { CgProfile } from "react-icons/cg";
 import { FiHeart } from "react-icons/fi";
 import { useCart } from './CartContext'
 
+const NAV_LINKS = [
+  { to: '/', label: 'HOME' },
+  { to: '/all', label: 'Shop All' },
+  { to: '/men', label: 'Men' },
+  { to: '/women', label: 'Women' },
+]
+
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { itemCount, openDrawer, wishlistItems } = useCart()
   const savedCount = wishlistItems ? wishlistItems.length : 0
+  const location = useLocation()
+  const activeClass = (to) =>
+    location.pathname === to
+      ? 'text-white font-bold'
+      : 'hover:text-[#cbcbcb] duration-75'
 
   return (
     <>
@@ -24,17 +36,14 @@ function Header() {
             </div>
 
             <div className=' flex gap-10 text-sm sm:text-[0.8rem]'>
-                <Link to="/" className=' hover:text-[#cbcbcb] duration-75'>HOME</Link>
-                <Link to="/all" className=' hover:text-[#cbcbcb] duration-75'>Shop All</Link>
-                <Link to="/men" className=' hover:text-[#cbcbcb] duration-75'>Men</Link>
-                <Link to="/women" className=' hover:text-[#cbcbcb] duration-75'>Women</Link>
+                {NAV_LINKS.map(({ to, label }) => (
+                  <Link key={to} to={to} className={`${activeClass(to)}`}>{label}</Link>
+                ))}
             </div>
 
             <div className=' flex gap-3 lg:gap-5 items-center'>
                 <Link to="/all" className=' text-lg lg:text-[1.1rem] font-bold' aria-label='search button'><RiSearchLine/></Link>
                 
-               
-
                 {/* CART */}
                 <button
                   onClick={openDrawer}
@@ -78,7 +87,7 @@ function Header() {
 
             <div className=' flex gap-4 items-center'>
                 <Link to="/all" className=' text-lg font-bold'><RiSearchLine /></Link>
-                <Link to="/saved" className='relative text-lg font-bold' aria-label='saved items'>
+                <Link to="/saved" className={`relative text-lg font-bold ${location.pathname === '/saved' ? 'text-white font-bold' : ''}`} aria-label='saved items'>
                   <FiHeart />
                   {savedCount > 0 && (
                     <span className='absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none'>
@@ -128,37 +137,19 @@ function Header() {
           </div>
 
           <nav className=' flex flex-col p-6 gap-6 uppercase text-white font-jakarta'>
-            <Link 
-              to="/" 
-              className=' text-lg hover:text-gray-300 transition-colors'
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/all" 
-              className=' text-lg hover:text-gray-300 transition-colors'
-              onClick={() => setIsMenuOpen(false)}>
-              Shop All
-            </Link>
-
-            <Link 
-              to="/men" 
-              className=' text-lg hover:text-gray-300 transition-colors'
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Men
-            </Link>
-            <Link 
-              to="/women" 
-              className=' text-lg hover:text-gray-300 transition-colors'
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Women
-            </Link>
-            <Link 
-              to="/saved" 
-              className=' text-lg hover:text-gray-300 transition-colors flex items-center justify-between'
+            {NAV_LINKS.map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={` text-lg ${activeClass(to)} transition-colors`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {label}
+              </Link>
+            ))}
+            <Link
+              to="/saved"
+              className={`text-lg flex items-center justify-between ${location.pathname === '/saved' ? 'text-white font-bold' : 'hover:text-gray-300 transition-colors'}`}
               onClick={() => setIsMenuOpen(false)}
             >
               <span>Saved Items</span>

@@ -38,7 +38,6 @@ function ProductDetails() {
     }
 
     fetchProductDetails()
-    window.scrollTo(0, 0)
   }, [id])
 
   const colors = [
@@ -215,7 +214,35 @@ function ProductDetails() {
               <div className='flex justify-between items-center text-xs font-semibold tracking-wider text-gray-900 uppercase'>                
               </div>
 
-              <div className='grid grid-cols-4 sm:grid-cols-5 gap-2'>
+              <div
+                className='grid grid-cols-4 sm:grid-cols-5 gap-2'
+                role='group'
+                aria-label='Select shoe size'
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault()
+                    const enabled = MENS_SIZES.filter((s) => !OUT_OF_STOCK_SIZES.includes(s))
+                    const currentIdx = enabled.indexOf(selectedSize)
+                    const next = enabled[(currentIdx + 1) % enabled.length]
+                    if (next !== undefined && !OUT_OF_STOCK_SIZES.includes(next)) {
+                      setSelectedSize(next)
+                    }
+                  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault()
+                    const enabled = MENS_SIZES.filter((s) => !OUT_OF_STOCK_SIZES.includes(s))
+                    const currentIdx = enabled.indexOf(selectedSize)
+                    const prev = enabled[(currentIdx - 1 + enabled.length) % enabled.length]
+                    if (prev !== undefined && !OUT_OF_STOCK_SIZES.includes(prev)) {
+                      setSelectedSize(prev)
+                    }
+                  } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    if (selectedSize !== null && !OUT_OF_STOCK_SIZES.includes(selectedSize)) {
+                      setSelectedSize(selectedSize)
+                    }
+                  }
+                }}
+              >
                 {MENS_SIZES.map((size) => {
                   const isOutOfStock = OUT_OF_STOCK_SIZES.includes(size)
                   const isSelected = selectedSize === size
@@ -225,11 +252,13 @@ function ProductDetails() {
                       key={size}
                       onClick={() => !isOutOfStock && setSelectedSize(size)}
                       disabled={isOutOfStock}
-                      className={`relative h-11 border rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                      aria-pressed={isSelected || undefined}
+                      aria-disabled={isOutOfStock || undefined}
+                      className={`relative h-11 border rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
                         isOutOfStock
                           ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50'
                           : isSelected
-                          ? 'bg-[#212121] text-white border-[#212121] shadow-xs'
+                          ? 'bg-[#212121] text-white border-[#212121] shadow-xs ring-1 ring-black'
                           : 'border-gray-300 text-gray-900 hover:border-black bg-white'
                       }`}
                     >

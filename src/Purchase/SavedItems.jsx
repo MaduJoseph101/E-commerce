@@ -54,7 +54,7 @@ function SavedItems() {
           </Link>
 
           <div className='flex items-center gap-2'>
-            <h1 className='text-lg sm:text-[1.1rem] flex gap-2 font-extrabold text-gray-950 tracking-tight uppercase'>
+            <h1 className='text-lg sm:text-[1rem] flex gap-2 font-extrabold text-gray-950 tracking-tight uppercase'>
               Saved Items <span className='text-gray-400 font-bold'>({wishlistItems.length})</span>
             </h1>
           </div>
@@ -90,7 +90,7 @@ function SavedItems() {
 
               {/* DETAILS */}
               <div className='space-y-3 px-1 flex-1 flex flex-col justify-between'>
-                <div>
+                <div className=' flex flex-col gap-1'>
                   <p className='text-[10px] font-bold text-gray-400 uppercase tracking-widest'>
                     {item.brand || 'AllShoes'}
                   </p>

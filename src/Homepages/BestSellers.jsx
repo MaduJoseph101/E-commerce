@@ -27,7 +27,7 @@ function BestSellers() {
   const [withTransition, setWithTransition] = useState(true)
   const isJumping = useRef(false)
   const prevVisibleCount = useRef(visibleCount)
-  const hasPositioned = useRef(false) 
+  const hasPositioned = useRef(false)
 
   // MOBILE DRAG FUNCTIONALITY
   const [dragPx, setDragPx] = useState(0)
@@ -35,6 +35,10 @@ function BestSellers() {
   const dragState = useRef({ active: false, startX: 0, moved: false })
   const viewportRef = useRef(null)
   const isMobile = visibleCount === 1
+
+  // Keyboard accessible arrow buttons
+  const prevDisabled = isJumping.current || data.length === 0
+  const nextDisabled = isJumping.current || data.length === 0
 
   useEffect(() => {
     let resizeTimeout
@@ -274,22 +278,22 @@ function BestSellers() {
       <div className='flex justify-between px-4 items-center'>
         <h2 id='best-sellers' className='uppercase tracking-wider text-[0.9rem] sm:text-[1.1rem] font-jakarta border-b-2 w-fit'>Trending Now</h2>
 
-        <span className='flex gap-4 font-jakarta items-center justify-center text-black'>
+        <span className='flex gap-4 font-jakarta items-center justify-center text-black' role='group' aria-label='Carousel navigation'>
           <button
-            type="button"
+            type='button'
             onClick={handlePrev}
-            aria-label="Previous product"
-            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
-
+            disabled={prevDisabled}
+            aria-label='Previous product'
+            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F5F0] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent'
           >
-
             <IoIosArrowBack/>
           </button>
           <button
-            type="button"
+            type='button'
             onClick={handleNext}
-            aria-label="Next product"
-            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white'
+            disabled={nextDisabled}
+            aria-label='Next product'
+            className='cursor-pointer border-black border-[1px] p-2 rounded-[50%] transition-all duration-300 ease-in-out font-bold hover:bg-black hover:text-white hover:scale-[1.1] active:bg-black active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F5F0] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent'
           >
             <IoIosArrowForward/>
           </button>
@@ -303,6 +307,9 @@ function BestSellers() {
       {/* CARDS */}
       <div ref={viewportRef} className='overflow-hidden pt-6 pb-6 mt-4 w-full min-h-[30vh]'>
         <div
+          role='group'
+          aria-roledescription='carousel'
+          aria-label='Trending products carousel'
           onTransitionEnd={handleTransitionEnd}
           onPointerDown={handleDragStart}
           onPointerMove={handleDragMove}

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useCart } from '../CartContext'
-import { FiX, FiCheckCircle, FiCreditCard, FiTruck, FiShield, FiArrowRight, FiArrowLeft } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
+import { FiX, FiCheckCircle, FiCreditCard, FiTruck, FiArrowRight, FiArrowLeft } from 'react-icons/fi'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -9,7 +8,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 })
 
 function CheckoutModal() {
-  const { isCheckoutOpen, closeCheckout, cartItems, subtotal, clearCart } = useCart()
+  const { isCheckoutOpen, closeCheckout, subtotal, clearCart } = useCart()
   const [step, setStep] = useState(1) // 1: Shipping, 2: Payment, 3: Confirmation
 
   // FORM STATES
@@ -87,23 +86,24 @@ function CheckoutModal() {
   }
 
   return (
-    <div className='fixed inset-0 z-50 overflow-y-auto font-jakarta flex items-center justify-center p-4 sm:p-6'>
+    <div className='fixed w-full inset-0 z-50 overflow-y-auto font-jakarta flex items-center justify-center p-4 sm:p-6'>
       {/* BACKRDROP */}
       <div className='fixed inset-0 bg-black/60 backdrop-blur-xs' onClick={handleClose} />
 
       {/* MODAL BOX */}
-      <div className='relative bg-[#ECE9E2] rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden border border-gray-300 z-10 my-8'>
+      <div className='relative bg-[#ECE9E2] rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden border border-gray-300 z-10 my-8 sm:my-0 sm:h-[90vh] sm:flex sm:flex-col'>
         
         {/* HEADER */}
-        <div className='bg-[#212121] text-white p-6 flex items-center justify-between'>
+        <div className='bg-[#212121] text-white p-6 flex items-center justify-between sm:shrink-0'>
           <div>
             <h2 className='text-lg font-extrabold uppercase tracking-wide'>
               {step === 3 ? 'Order Confirmed!' : 'Checkout'}
             </h2>
             {step < 3 && (
               <p className='text-xs text-gray-400 font-semibold'>
-                Step {step} of 2 — {step === 1 ? 'Shipping Address' : 'Payment Details'}
+                Step {step} of 3 — {step === 1 ? 'Shipping Address' : 'Payment Details'}
               </p>
+
             )}
           </div>
           <button
@@ -116,37 +116,38 @@ function CheckoutModal() {
 
         {/* STEP 1 & 2 PROGRESS BAR */}
         {step < 3 && (
-          <div className='bg-white px-6 py-3 border-b border-gray-200 flex justify-between text-xs font-bold uppercase tracking-wider text-gray-500'>
-            <span className={step >= 1 ? 'text-black flex items-center gap-1.5' : ''}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-black text-white' : 'bg-gray-200'}`}>1</span>
+          <div className='bg-white px-4 sm:px-6 py-5 border-b border-gray-200 flex flex-wrap justify-between items-center gap-x-1.5 sm:gap-x-2 gap-y-1 text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-gray-500'>
+            <span className={`flex items-center gap-1.5 shrink-0 ${step >= 1 ? 'text-black' : ''}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${step >= 1 ? 'bg-black text-white' : 'bg-gray-200'}`}>1</span>
               Shipping
             </span>
-            <span className={step >= 2 ? 'text-black flex items-center gap-1.5' : ''}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 2 ? 'bg-black text-white' : 'bg-gray-200'}`}>2</span>
+            <span className={`flex items-center gap-1.5 shrink-0 ${step >= 2 ? 'text-black' : ''}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${step >= 2 ? 'bg-black text-white' : 'bg-gray-200'}`}>2</span>
               Payment
             </span>
-            <span className='flex items-center gap-1.5 opacity-50'>
-              <span className='w-5 h-5 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px]'>3</span>
+            <span className='flex items-center gap-1.5 shrink-0 opacity-50'>
+              <span className='w-5 h-5 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] shrink-0'>3</span>
               Confirmation
             </span>
           </div>
         )}
 
-        <div className='p-6 sm:p-8 space-y-6 max-h-[75vh] overflow-y-auto'>
+        <div className='p-6 sm:p-8 space-y-6 max-h-[75vh] overflow-y-auto sm:max-h-none sm:flex-1 sm:min-h-0'>
           
           {/* STEP 1: SHIPPING FORM */}
           {step === 1 && (
             <div className='space-y-4'>
-              <h3 className='text-sm font-extrabold uppercase tracking-wider text-gray-900 flex items-center gap-2'>
+              <h3 className='text-sm px-1 font-extrabold uppercase tracking-wider text-gray-900 flex items-center gap-2'>
                 <FiTruck /> Shipping Details
               </h3>
 
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div>
-                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                  <label htmlFor='fullName' className='block px-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                     Full Name *
                   </label>
                   <input
+                    id='fullName'
                     type='text'
                     name='fullName'
                     value={formData.fullName}
@@ -158,10 +159,12 @@ function CheckoutModal() {
                 </div>
 
                 <div>
-                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                  <label htmlFor='email' className='block px-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                     Email Address *
                   </label>
                   <input
+                    id='email'
+                    required
                     type='email'
                     name='email'
                     value={formData.email}
@@ -173,10 +176,11 @@ function CheckoutModal() {
                 </div>
 
                 <div className='sm:col-span-2'>
-                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                  <label htmlFor='address' className='block px-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                     Street Address *
                   </label>
                   <input
+                    id='address'
                     type='text'
                     name='address'
                     value={formData.address}
@@ -188,10 +192,11 @@ function CheckoutModal() {
                 </div>
 
                 <div>
-                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                  <label htmlFor='city' className='block px-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                     City *
                   </label>
                   <input
+                    id='city'
                     type='text'
                     name='city'
                     value={formData.city}
@@ -203,10 +208,11 @@ function CheckoutModal() {
                 </div>
 
                 <div>
-                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                  <label htmlFor='zip' className='block px-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                     ZIP / Postal Code *
                   </label>
                   <input
+                    id='zip'
                     type='text'
                     name='zip'
                     value={formData.zip}
@@ -243,7 +249,7 @@ function CheckoutModal() {
                 <FiCreditCard /> Select Payment Method
               </h3>
 
-              <div className='grid grid-cols-3 gap-3'>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3'>
                 {['card', 'paypal', 'cod'].map((method) => (
                   <button
                     key={method}
@@ -265,10 +271,11 @@ function CheckoutModal() {
               {formData.paymentMethod === 'card' && (
                 <div className='space-y-3 bg-white p-5 rounded-2xl border border-gray-200'>
                   <div>
-                    <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                    <label htmlFor='cardNumber' className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                       Card Number *
                     </label>
                     <input
+                      id='cardNumber'
                       type='text'
                       name='cardNumber'
                       value={formData.cardNumber}
@@ -282,10 +289,11 @@ function CheckoutModal() {
 
                   <div className='grid grid-cols-2 gap-3'>
                     <div>
-                      <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                      <label htmlFor='cardExpiry' className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                         Expiry (MM/YY) *
                       </label>
                       <input
+                        id='cardExpiry'
                         type='text'
                         name='cardExpiry'
                         value={formData.cardExpiry}
@@ -298,10 +306,11 @@ function CheckoutModal() {
                     </div>
 
                     <div>
-                      <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
+                      <label htmlFor='cardCvc' className='block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1'>
                         CVC / CVV *
                       </label>
                       <input
+                        id='cardCvc'
                         type='text'
                         name='cardCvc'
                         value={formData.cardCvc}
@@ -343,9 +352,9 @@ function CheckoutModal() {
                 <h3 className='text-2xl font-extrabold text-gray-950 tracking-tight'>
                   Thank you for your order!
                 </h3>
-                <p className='text-xs text-gray-600 max-w-md mx-auto'>
+                <p className='text-xs flex flex-col gap-1 gray-600 max-w-md mx-auto'>
                   Your order has been placed successfully. A confirmation email has been sent to{' '}
-                  <span className='font-bold text-gray-900'>{formData.email || 'your email'}</span>.
+                  <span className='font-bold text-gray-900'>{formData.email || 'your email'}</span>
                 </p>
               </div>
 
@@ -373,7 +382,7 @@ function CheckoutModal() {
         </div>
 
         {/* MODAL FOOTER */}
-        <div className='p-6 bg-white border-t border-gray-200 flex justify-between items-center'>
+        <div className='p-6 bg-white border-t border-gray-200 flex justify-between items-center sm:shrink-0'>
           {step > 1 && step < 3 ? (
             <button
               onClick={() => setStep(1)}

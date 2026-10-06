@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './Commerce.css'
 import Header from './Header'
@@ -10,7 +10,7 @@ import Signup from './Signup'
 import Cart from './Purchase/Cart'
 import ProductDetails from './Purchase/ProductDetails'
 import Footer from './Footer'
-import { BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import FAQ from './Props/FAQ'
 import { CartProvider } from './CartContext'
 
@@ -22,10 +22,19 @@ import UndoToast from './Purchase/UndoToast'
 import WishlistToast from './Purchase/WishlistToast'
 import SavedItems from './Purchase/SavedItems'
 
+function ScrollToTop() {
+  const location = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+  return null
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <CartProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Header/>
         <Routes>
           <Route path='/' element={<Homepage/>}/>
